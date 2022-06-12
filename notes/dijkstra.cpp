@@ -3,7 +3,7 @@
 #include <queue>
 
 using namespace std;
-#define INF (1LL << 60)
+#define INF 0x7fffffffLL
 
 typedef unsigned long long Weight;
 
@@ -17,39 +17,43 @@ bool operator>(WeightedVertex a, WeightedVertex b) {
     return a.v > b.v;
 }
 
-int main() {
-    int n, m;
-    cin >> n >> m;
-    vector<vector<WeightedVertex>> graph(n);
-    vector<unsigned long long> f(n);
+void dijkstra(int start, int n, vector<Weight> &f, vector<vector<WeightedVertex>> &graph) {
     for (int i = 0; i < n; i++) f[i] = INF;
-    
-    for (int i = 0; i < m; i++) {
-        int u, v;
-        unsigned long long w;
-        cin >> u >> v >> w;
-        graph[u].push_back(WeightedVertex{v, w});
-    }
-    
     priority_queue<WeightedVertex, vector<WeightedVertex>, greater<WeightedVertex>> pq;
-    
-    f[0] = 0;
-    pq.push(WeightedVertex{0, 0});
 
-    while(!pq.empty()) {
-        WeightedVertex x = pq.top();
+    f[start] = 0;
+    pq.push(WeightedVertex{start, 0});
+    while (!pq.empty()) {
+        WeightedVertex here = pq.top();
         pq.pop();
-        if (x.w > f[x.v]) continue;
-        if (f[x.v] >= INF) break;
-        for (auto next: graph[x.v]) {
-            unsigned long long tmp = f[x.v] + next.w;
+        if (f[here.v] >= INF) break;
+        for (auto next: graph[here.v]) {
+            Weight tmp = f[here.v] + next.w;
             if (tmp < f[next.v]) {
                 f[next.v] = tmp;
                 pq.push(WeightedVertex{next.v, tmp});
             }
         }
     }
+
+    return;
+}
+
+int main() {
+    int n, m;
+    cin >> n >> m;
+    vector<vector<WeightedVertex>> graph(n);
+    vector<Weight> f(n);
+    
+    for (int i = 0; i < m; i++) {
+        int u, v;
+        Weight w;
+        cin >> u >> v >> w;
+        graph[u].push_back(WeightedVertex{v, w});
+    }
+    
+    dijkstra(0, n, f, graph);
+    
     for (int i = 0; i < n; i++) cout << i << ": " << f[i] << "\n";
     return 0;
-
 }
