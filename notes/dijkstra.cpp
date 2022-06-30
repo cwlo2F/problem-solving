@@ -26,7 +26,7 @@ void dijkstra(int start, int n, vector<Weight> &f, vector<vector<WeightedVertex>
     while (!pq.empty()) {
         WeightedVertex here = pq.top();
         pq.pop();
-        if (f[here.v] >= INF) break;
+        if (f[here.v] > here.w) continue;
         for (auto next: graph[here.v]) {
             Weight tmp = f[here.v] + next.w;
             if (tmp < f[next.v]) {
